@@ -1,3 +1,6 @@
+# Tidy Tuesday 2025 Code
+# Week 1: Bring Your Own Data
+
 # setup 
 
 install.packages("tidyverse")
