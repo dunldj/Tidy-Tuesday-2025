@@ -10,10 +10,10 @@ library(janitor)
 
 # import data 
 
-  # Note: data manually downloaded from the National Cancer Institute's
-  # Surveillance, Epidemiology, and End Results (SEER) Program webpage
-  # link: https://seer.cancer.gov/
-  # mild data cleaning performed in Excel to remove metadata
+# Note: data manually downloaded from the National Cancer Institute's
+# Surveillance, Epidemiology, and End Results (SEER) Program webpage
+# link: https://seer.cancer.gov/
+# mild data cleaning performed in Excel to remove metadata
 
 # read and clean data
 
@@ -40,10 +40,10 @@ full_data <- bind_rows(lung_clean, prostate_clean, breast_clean, colorectal_clea
 view(full_data)
 
 full_data_clean <- full_data %>% pivot_longer(cols = c(female_rate_per_100_000, male_rate_per_100_000), names_to = "sex", 
-                                 values_to = "rates_per_100_000") %>%
-                                 select(-c(female_modeled_rate_trend_line, 
-                                           male_modeled_rate_trend_line)) %>%
-                                mutate(sex = recode(sex, "female_rate_per_100_000" = "Female", "male_rate_per_100_000" = "Male"))
+                                              values_to = "rates_per_100_000") %>%
+  select(-c(female_modeled_rate_trend_line, 
+            male_modeled_rate_trend_line)) %>%
+  mutate(sex = recode(sex, "female_rate_per_100_000" = "Female", "male_rate_per_100_000" = "Male"))
 
 # data viz prep
 
@@ -56,7 +56,7 @@ ggplot(full_data_clean, mapping = aes(x = year_of_diagnosis, y = rates_per_100_0
   geom_point(size = 0.2, alpha = 0.8) +
   facet_wrap(~factor(cancer_type, c("Breast", "Prostate", "Lung", "Colorectal"))) + 
   scale_x_continuous(name = "Year of Diagnosis", breaks = seq(1975, 2021, by = 5)) +
-  theme(axis.text.x=element_text(angle = -90, hjust = 0)) +
+  
   scale_y_continuous(name = "Rate per 100,000", breaks = seq(0, 250, by = 25)) +
   scale_color_manual(values = cbPalette) +
   geom_vline(xintercept = 2020, linetype = 2, color = "black", alpha = 0.5) +
@@ -64,5 +64,7 @@ ggplot(full_data_clean, mapping = aes(x = year_of_diagnosis, y = rates_per_100_0
        caption = "Source: National Cancer Institute \nSEER Program \n \n *Note: The COVID-19 epidemic impacted \n the reliability of figures for 2020-2021",
        color = "Sex") +
   annotate("label",  x = 2015, y = 190, label = "COVID-19*") +
-  theme_bw(base_size = 16)
-                                                      
+  theme_bw(base_size = 16) +
+  theme(axis.text.x=element_text(angle = -45, hjust = 0)) 
+
+ggsave("us-cancer-incidence.png")
