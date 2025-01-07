@@ -56,12 +56,13 @@ ggplot(full_data_clean, mapping = aes(x = year_of_diagnosis, y = rates_per_100_0
   geom_point(size = 0.2, alpha = 0.8) +
   facet_wrap(~factor(cancer_type, c("Breast", "Prostate", "Lung", "Colorectal"))) + 
   scale_x_continuous(name = "Year of Diagnosis", breaks = seq(1975, 2021, by = 5)) +
+  theme(axis.text.x=element_text(angle = -90, hjust = 0)) +
   scale_y_continuous(name = "Rate per 100,000", breaks = seq(0, 250, by = 25)) +
-  scale_color_discrete(name = "Sex") +
+  scale_color_manual(values = cbPalette) +
   geom_vline(xintercept = 2020, linetype = 2, color = "black", alpha = 0.5) +
   labs(title = "Delay-Adjusted Incidence Rates for the Four Most Common Cancer Types in the U.S. (1975-2021)", 
-       caption = "Source: National Cancer Institute \nSEER Program \n \n *Note: The COVID-19 epidemic impacted \n the reliability of figures for 2020-2021", legend = "Sex") +
+       caption = "Source: National Cancer Institute \nSEER Program \n \n *Note: The COVID-19 epidemic impacted \n the reliability of figures for 2020-2021",
+       color = "Sex") +
   annotate("label",  x = 2015, y = 190, label = "COVID-19*") +
-  scale_color_manual(values = cbPalette) + 
   theme_bw(base_size = 16)
                                                       
