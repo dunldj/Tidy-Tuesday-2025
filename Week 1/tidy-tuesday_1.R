@@ -68,3 +68,23 @@ ggplot(full_data_clean, mapping = aes(x = year_of_diagnosis, y = rates_per_100_0
   theme(axis.text.x=element_text(angle = -45, hjust = 0)) 
 
 ggsave("us-cancer-incidence.png")
+
+# alternative figure based on changes made in response to Bluesky feedback
+
+cbPalette2 <- c("#CC79A7", "#D55E00", "#000000", "#0072B2")
+
+full_data_clean$sex <- factor(full_data_clean, levels = c("Female", "Male"))
+
+ggplot(full_data_clean, mapping = aes(x = year_of_diagnosis, y = rates_per_100_000, color = cancer_type)) +
+  geom_line(mapping = aes(linetype = sex)) +
+  scale_x_continuous(name = "Year of Diagnosis", breaks = seq(1975, 2021, by = 5)) +
+  scale_y_continuous(name = "Rate per 100,000", breaks = seq(0, 250, by = 25)) +
+  scale_color_manual(values = cbPalette2) +
+  scale_linetype_manual(name = "Sex", values =c("Female" = "solid", "Male" = "dashed")) +
+  labs(title = "Delay-Adjusted Incidence Rates for the Four Most Common Cancer Types in the U.S. (1975-2021)", 
+       caption = "Source: National Cancer Institute \nSEER Program \n \n *Note: The COVID-19 epidemic impacted \n the reliability of figures for 2020-2021",
+       color = "Cancer Type") +
+  theme_classic(base_size = 16) +
+  theme(axis.text.x=element_text(angle = -45, hjust = 0)) 
+
+ggsave("us-cancer-incidence-v2.png")
