@@ -52,6 +52,7 @@ posit_23_24_clean <- posit_23_24 %>%
 posit_23_24_clean
 
 # data viz - convert to word count
+# for 2023 conference
 
 tidy_text_data_23 <- posit_23_24_clean %>%
       filter(year == 2023) %>% 
@@ -71,6 +72,7 @@ tidy_text_posit_23 %>%
   geom_col() +
   labs(y = NULL)
 
+# for 2024 conference
 
 tidy_text_data_24 <- posit_23_24_clean %>%
   filter(year == 2024) %>% 
@@ -97,7 +99,6 @@ word_count_clean_23 <- word_count_23 %>%
 word_count_clean_24 <- word_count_24 %>%
   filter(n >= 5) %>%
   rename(freq = n)
-
 
 # data viz and final output
 
