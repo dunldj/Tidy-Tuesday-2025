@@ -1,0 +1,70 @@
+# Tidy Tuesday 2025 Code
+# Week 3: The History of Himalayan Mountaineering Expeditions
+
+###########################
+
+# setup 
+
+install.packages("tidyverse")
+install.packages("janitor")
+install.packages("ggimage")
+install.packages("countrycode")
+install.packages("ggtext")
+library(tidyverse)
+library(janitor)
+library(ggimage)
+library(countrycode)
+library(ggtext)
+
+
+# import data 
+
+exped_tidy <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-21/exped_tidy.csv')
+
+
+view(exped_tidy)
+
+# clean variable names and join data
+
+# we want to do a bar chart, completed expeditions by country
+
+country_totals <- exped_tidy %>% 
+  filter(CLAIMED = TRUE) %>%
+  group_by(NATION) %>%
+  count() 
+
+country_totals_add <- country_totals %>% 
+  select(NATION, n) %>%
+  summarise(NATION = recode(NATION, "S Africa" = "South Africa")) %>%
+  mutate(iso2 = countrycode(NATION, origin = "country.name", "iso2c"))
+
+dirty_data_exped <- left_join(country_totals, country_totals_add)
+data_exped <- clean_names(dirty_data_exped) 
+data_exped$n[data_exped$nation == "S Africa"] <- 4
+
+data_exped$iso2 <- tolower(data_exped$iso2)
+data_exped$iso2[data_exped$nation == "S Africa"] <- "za"
+data_exped <- data_exped %>% rename(number = n)
+data_exped <- data_exped %>% arrange(desc(number))
+
+data_exped %>% ggplot(mapping = aes(reorder(nation, number), y = number)) +
+  geom_col(width = 0.80, color = "black", fill = "#64aced") + 
+  geom_image(mapping = aes(image = paste0("https://flagcdn.com/w320/", iso2, ".png")), y = -5)  +
+  coord_flip() +
+  theme_minimal() +
+  expand_limits(y = -10) +
+  labs(x = "Country", y = "Number of Expeditions Claimed Completed", title = "Number of Claimed Himilayan Mountaineering Expeditions Completed, by Country,\nfor 2020-2024")
+
+
+# data viz and final output (top 15)
+
+data_exped %>% filter(number > 15) %>% ggplot(mapping = aes(reorder(nation, number), y = number)) +
+  geom_col(width = 0.80, color = "black", fill = "#64aced") + 
+  geom_image(mapping = aes(image = paste0("https://flagcdn.com/w320/", iso2, ".png")), y = -5, size = 0.05)  +
+  geom_text(aes(label = number), hjust = -0.38, color = "#64aced", size = 5) +
+  coord_flip() +
+  theme_minimal(base_size = 16) +
+  expand_limits(y = -3) +
+  theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(), panel.minor.x = element_blank()) +
+  labs(x = "Country", y = "Number of Expeditions Claimed Completed", title = "Top 15 Countries by Number of Claimed Himilayan \nMountaineering Expeditions Completed (2020-2024)",
+       caption = "Source: The Himalayan Database")
